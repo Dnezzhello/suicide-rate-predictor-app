@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import numpy as np
 
 st.set_page_config(page_title='Suicide Rate Prediction App',
                    page_icon=':chart_with_upwards_trend:',
@@ -49,10 +50,7 @@ def preprocess_input(country, sex, age_group, suicides_no,
     # Encode categorical variables using the label encoder
     for cat, encoder in label_encoder.items():
         input_data[cat] = encoder.transform(input_data[cat])
-    # input_data['country'] = label_encoder.transform(input_data['country'])
-    # input_data['sex'] = label_encoder.transform(input_data['sex'])
-    # input_data['age_group'] = label_encoder.transform(input_data['age_group'])
-    # input_data['generation'] = label_encoder.transform(input_data['generation'])
+
 
     # Apply the numerical scaler to the input data
     numerical_features = ['suicides_no', 'population', 'gdp_for_year', 'gdp_per_capita']
@@ -67,6 +65,8 @@ def make_prediction(input_data):
 
     # Inverse transform the scaled target variable to get the original value
     prediction = target_scaler.inverse_transform(prediction.reshape(-1, 1))
+
+    prediction = prediction[0][0]
 
     return prediction
 
@@ -98,16 +98,38 @@ def input_form():
         # Make predictions using the preprocessed data
         prediction = make_prediction(input_data)
 
-        # Display the predicted suicide rate
-        st.warning(f'Predicted Suicide Rate: {prediction[0][0]} per 100k people')
-
+        return [country, sex, age_group, suicides_no, population, 
+        hdi, gdp_for_year, gdp_per_capita, generation, prediction]
+    
+    return [" "]*10
 
 # Define the main function
 def main():
+
     st.title('Data Mining Project')
-    st.header('Suicide Rate Predictor By Group 1 2CS1')
-    st.write('Use this app to predict the suicide rate for a given set of parameters.')
-    input_form()
+    st.header('Suicide Rate Predictor By 2CS1')
+    st.write('--------------')
+    st.subheader('Input Parameters')
+
+    lst = input_form()
+    st.write('##### Country = ', lst[0])
+    st.write('##### Sex = ', lst[1])
+    st.write('##### Age Group = ', lst[2])
+    st.write('##### Number of Suicides = ', str(lst[3]))
+    st.write('##### Population = ', str(lst[4]))
+    st.write('##### HDI = ', str(lst[5]))
+    st.write('##### GDP for year = ', str(lst[6]))
+    st.write('##### GDP per capita = ', str(lst[7]))
+    st.write('##### Generation = ', lst[8])
+
+    st.write('--------------')
+
+    st.subheader('Prediction')
+    if lst[0] == " ":
+        st.warning(f'##### Predicted Suicide Rate: 0 per 100k people')
+    else:
+        prediction_formatted = '{:.2f}'.format(lst[9])
+        st.warning(f'##### Predicted Suicide Rate: {prediction_formatted} per 100k people')
 
 if __name__ == '__main__':
     main()
