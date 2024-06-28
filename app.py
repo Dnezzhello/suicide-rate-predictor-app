@@ -106,9 +106,16 @@ def input_form():
 # Define the main function
 def main():
 
-    st.title('Data Mining Project')
-    st.header('Suicide Rate Predictor By 2CS1')
-    st.write('--------------')
+    st.title('Machine Learning Project')
+    st.header('Suicide Rate Predictor')
+
+    st.markdown("---")
+    st.subheader("Created by:")
+    st.markdown("""
+    - **Souphaxay Naovalath** (3CS1)
+    - **Thongchan Laothang** (3CS1)
+    """)
+    st.markdown("---")
     st.subheader('Input Parameters')
 
     lst = input_form()
